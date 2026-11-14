@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solita – Santeri Keskinen</title>
+  <meta name="description" content="Solita project: front-end and testing for an on-site Finnish AI chat assistant answering Kela student benefit questions.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230062cc'/%3E%3Ctext x='50' y='67' font-size='46' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3ESK%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../styles.css">
+  <script>
+    // Dark mode: one choice for the whole site, kept across pages
+    (function () {
+      var root = document.documentElement, KEY = 'theme';
+      var local = location.protocol === 'file:';   // opened straight from disk: browsers may not share storage between files
+      var explicit = false;
+
+      function readStore() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+      function writeStore(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+      function readName() { var m = /^theme-(dark|light)$/.exec(window.name); return m ? m[1] : null; }
+      function readUrl() { var m = /[?&]theme=(dark|light)/.exec(location.search); return m ? m[1] : null; }
+      function choice(restored) {
+        if (!local) return readStore();
+        return restored ? (readName() || readUrl() || readStore()) : (readUrl() || readName() || readStore());
+      }
+      function isDark() { return root.getAttribute('data-theme') === 'dark'; }
+      function apply(v) { if (v === 'dark') root.setAttribute('data-theme', 'dark'); else root.removeAttribute('data-theme'); }
+      function sync() {
+        var b = document.querySelector('.theme-toggle');
+        if (b) b.setAttribute('aria-pressed', isDark() ? 'true' : 'false');
+      }
+      function withTheme(href, v) {
+        var h = href.indexOf('#'), hash = h > -1 ? href.slice(h) : '', base = h > -1 ? href.slice(0, h) : href;
+        base = base.replace(/([?&])theme=(dark|light)(&|$)/, function (m, a, b, c) { return c ? a : ''; }).replace(/[?&]$/, '');
+        return base + (base.indexOf('?') > -1 ? '&' : '?') + 'theme=' + v + hash;
+      }
+      // When opened from disk, carry the choice to other pages in the links
+      function decorate() {
+        if (!local || !explicit) return;
+        var v = isDark() ? 'dark' : 'light';
+        var links = document.querySelectorAll('a[href]');
+        for (var i = 0; i < links.length; i++) {
+          var href = links[i].getAttribute('href');
+          if (/^([a-z][a-z0-9+.-]*:|#|\/\/)/i.test(href)) continue;
+          var path = href.split('#')[0].split('?')[0];
+          if (path && !/\.html?$/i.test(path)) continue;
+          links[i].setAttribute('href', withTheme(href, v));
+        }
+      }
+
+      var chosen = choice(false);
+      if (chosen) { explicit = true; apply(chosen); if (local) window.name = 'theme-' + chosen; }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        sync();
+        decorate();
+        var button = document.querySelector('.theme-toggle');
+        if (!button) return;
+        button.addEventListener('click', function () {
+          var v = isDark() ? 'light' : 'dark';
+          explicit = true;
+          apply(v);
+          writeStore(v);
+          if (local) {
+            window.name = 'theme-' + v;
+            try { history.replaceState(null, '', withTheme(location.href, v)); } catch (e) {}
+          }
+          decorate();
+          sync();
+        });
+      });
+
+      // Going back/forward can show a cached page: bring it up to date
+      window.addEventListener('pageshow', function (e) {
+        if (!e.persisted) return;
+        var v = choice(true);
+        if (v) { explicit = true; apply(v); decorate(); }
+        sync();
+      });
+    })();
+  </script>
+</head>
+<body class="project-page">
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="logo">Santeri Keskinen</a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="../about.html">About</a></li>
+          <li><a href="../projects.html" aria-current="true">Projects</a></li>
+          <li><a href="../contact.html">Contact</a></li>
+          <li><button type="button" class="theme-toggle" aria-pressed="false" aria-label="Dark mode" title="Dark mode"><svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <h1>Solita</h1>
+    <section class="summary" aria-labelledby="summary-title">
+      <h2 id="summary-title">At a Glance</h2>
+      <ul>
+          <li><strong>Problem</strong> Solita needed an on-site AI assistant that answers Kela’s student benefit FAQs in Finnish without external language model APIs.</li>
+          <li><strong>What I did</strong> Built the front-end and landing page, tested the system manually and documented the project.</li>
+          <li><strong>Result</strong> A working minimum viable product with speech-to-text and text-to-speech, delivered as a Docker application and demonstrated to Solita and Kela.</li>
+      </ul>
+    </section>
+    <section class="description glass-light" aria-labelledby="description">
+      <h2 id="description">Project Description</h2>
+      <p>
+        FiLOs (Finnish LLM OnSite) is a chat assistant that answers frequently asked questions about Kela’s student benefits. It runs entirely on local, open-source language models, understands spoken or typed Finnish, and can read its answers aloud. A team of seven students built it for Solita as a software engineering project.
+      </p>
+    </section>
+    <hr>
+    <section class="about" aria-labelledby="about">
+    <div class="about-inline">
+        <div class="about-field">
+        <h3>Timeline</h3>
+        <p>Sep 2023 – Dec 2023</p>
+        </div>
+        <div class="about-field">
+        <h3>Type</h3>
+        <p>Software Development</p>
+        </div>
+        <div class="about-field">
+        <h3>Project Type</h3>
+        <p>University project</p>
+        </div>
+        <div class="about-field">
+        <h3>Role</h3>
+        <p>Frontend Developer</p>
+        </div>
+    </div>
+    </section>
+
+    <section class="project-sections">
+      <!-- Add screenshots here, e.g. a screenshot of the chat interface or landing page
+      <figure class="project-figure"><img src="../images/FILE.png" alt="Describe what the image shows"><figcaption>Caption</figcaption></figure> -->
+
+      <article class="glass-light">
+        <h2>Problem Statement</h2>
+        <p>Solita wanted to explore an AI assistant that could answer student-benefit questions without sending data to external language model APIs. Those APIs are expensive, especially for Finnish, and raise information security concerns when the data is confidential.</p>
+        <p>The assistant therefore had to run fully on-site, support both spoken and written Finnish, and be easy to deploy inside a Docker container.</p>
+      </article>
+
+      <article class="glass-light">
+        <h2>My Contribution</h2>
+        <p>I worked on the front-end of the application, created the landing page with HTML and CSS, and documented the project. I also did manual system testing and recorded the interface issues I found so they could be fixed. We worked in two-week sprints with weekly meetings with the customer.</p>
+      </article>
+
+      <article class="glass-light">
+        <h2>Research &amp; Evaluation</h2>
+        <p>This was a research-heavy project: a lot of time went into studying open-source language models, how they can be fine-tuned and which ones suit on-site use. No Finnish dataset could be obtained, so the team built its own training data manually from the FAQ on Kela’s website.</p>
+      </article>
+
+      <article class="glass-light">
+        <h2>Solution &amp; Recommendations</h2>
+        <p>The application combines three open-source models: a Finnish speech-to-text model, a TurkuNLP model fine-tuned for answer generation, and Mozilla TTS for reading answers aloud. A React front-end and a FastAPI back-end are deployed together with Docker Compose.</p>
+      </article>
+
+      <article class="glass-light">
+        <h2>Testing &amp; Validation</h2>
+        <p>The team tested at unit, integration, system and acceptance level, with the customer and end-users involved in acceptance and beta testing. Testing found two major bugs: audio playback could interfere when several messages were played at once (medium severity), and the assistant struggled with heavily misspelled questions or special characters (high severity). Both were still open at delivery.</p>
+      </article>
+
+      <article class="glass-light">
+        <h2>Outcomes &amp; Learnings</h2>
+        <p>We delivered a working minimum viable product that answers simple Kela FAQ questions with speech-to-text and text-to-speech, and it was demonstrated to Solita and Kela. Ideas for further development include a larger FAQ dataset, handling longer speech input, and adding a retrieval-augmented question answering model.</p>
+        <p>A key lesson was to scope realistically: we dropped our early plan to train our own GPT model once it proved too ambitious for our time and resources.</p>
+      </article>
+    </section>
+
+    <div class="center">
+      <a href="../projects.html" class="btn">Back to Projects</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 Santeri Keskinen — <a href="mailto:santkesk@proton.me">santkesk@proton.me</a></p>
+  </footer>
+</body>
+</html>

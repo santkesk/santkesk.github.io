@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Santeri Keskinen – About</title>
+  <meta name="description" content="About Santeri Keskinen: education, work experience and skills in UX research and design.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230062cc'/%3E%3Ctext x='50' y='67' font-size='46' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3ESK%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Dark mode: one choice for the whole site, kept across pages
+    (function () {
+      var root = document.documentElement, KEY = 'theme';
+      var local = location.protocol === 'file:';   // opened straight from disk: browsers may not share storage between files
+      var explicit = false;
+
+      function readStore() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+      function writeStore(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+      function readName() { var m = /^theme-(dark|light)$/.exec(window.name); return m ? m[1] : null; }
+      function readUrl() { var m = /[?&]theme=(dark|light)/.exec(location.search); return m ? m[1] : null; }
+      function choice(restored) {
+        if (!local) return readStore();
+        return restored ? (readName() || readUrl() || readStore()) : (readUrl() || readName() || readStore());
+      }
+      function isDark() { return root.getAttribute('data-theme') === 'dark'; }
+      function apply(v) { if (v === 'dark') root.setAttribute('data-theme', 'dark'); else root.removeAttribute('data-theme'); }
+      function sync() {
+        var b = document.querySelector('.theme-toggle');
+        if (b) b.setAttribute('aria-pressed', isDark() ? 'true' : 'false');
+      }
+      function withTheme(href, v) {
+        var h = href.indexOf('#'), hash = h > -1 ? href.slice(h) : '', base = h > -1 ? href.slice(0, h) : href;
+        base = base.replace(/([?&])theme=(dark|light)(&|$)/, function (m, a, b, c) { return c ? a : ''; }).replace(/[?&]$/, '');
+        return base + (base.indexOf('?') > -1 ? '&' : '?') + 'theme=' + v + hash;
+      }
+      // When opened from disk, carry the choice to other pages in the links
+      function decorate() {
+        if (!local || !explicit) return;
+        var v = isDark() ? 'dark' : 'light';
+        var links = document.querySelectorAll('a[href]');
+        for (var i = 0; i < links.length; i++) {
+          var href = links[i].getAttribute('href');
+          if (/^([a-z][a-z0-9+.-]*:|#|\/\/)/i.test(href)) continue;
+          var path = href.split('#')[0].split('?')[0];
+          if (path && !/\.html?$/i.test(path)) continue;
+          links[i].setAttribute('href', withTheme(href, v));
+        }
+      }
+
+      var chosen = choice(false);
+      if (chosen) { explicit = true; apply(chosen); if (local) window.name = 'theme-' + chosen; }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        sync();
+        decorate();
+        var button = document.querySelector('.theme-toggle');
+        if (!button) return;
+        button.addEventListener('click', function () {
+          var v = isDark() ? 'light' : 'dark';
+          explicit = true;
+          apply(v);
+          writeStore(v);
+          if (local) {
+            window.name = 'theme-' + v;
+            try { history.replaceState(null, '', withTheme(location.href, v)); } catch (e) {}
+          }
+          decorate();
+          sync();
+        });
+      });
+
+      // Going back/forward can show a cached page: bring it up to date
+      window.addEventListener('pageshow', function (e) {
+        if (!e.persisted) return;
+        var v = choice(true);
+        if (v) { explicit = true; apply(v); decorate(); }
+        sync();
+      });
+    })();
+  </script>
+</head>
+<body class="about-me">
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">Santeri Keskinen</a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="about.html" aria-current="page">About</a></li>
+          <li><a href="projects.html">Projects</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><button type="button" class="theme-toggle" aria-pressed="false" aria-label="Dark mode" title="Dark mode"><svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="page-intro">
+      <h1>About Me</h1>
+      <p>UX Researcher &amp; Designer, Master’s student in Human–Technology Interaction at Tampere University.</p>
+    </div>
+
+    <section class="glass-light about-section" aria-labelledby="intro-title">
+      <h2 id="intro-title">Hello, I’m Santeri</h2>
+      <div class="intro-layout">
+        <img src="images/profile.jpg" alt="Portrait of Santeri Keskinen" class="profile-photo" width="400" height="400">
+        <div class="intro-text">
+          <p>I have a passion for designing technology that puts people first. I’m motivated by understanding users’ needs, experiences and challenges, and by turning those insights into ethical, user-centered solutions.</p>
+          <p>My expertise lies in user research and UI/UX design, and I have gained hands-on experience through industry collaboration projects during my studies.</p>
+          <div class="chips">
+            <a href="Projects/solita.html" class="chip">Solita</a>
+            <a href="Projects/polar.html" class="chip">Polar Electro</a>
+            <a href="Projects/libreoffice.html" class="chip">LibreOffice</a>
+            <a href="Projects/toas.html" class="chip">TOAS</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="glass-light about-section" aria-labelledby="experience-title">
+      <h2 id="experience-title">Work Experience</h2>
+      <div class="entry">
+        <h3>Research Assistant</h3>
+        <p class="meta">Tampere University, GameIN project · 2025–2026</p>
+        <ul>
+          <li>Worked in a multinational project with multiple partners</li>
+          <li>Conducted research and data analysis, updated the WordPress website, and translated content</li>
+          <li>Planned and organized field tests, workshops and a competition</li>
+        </ul>
+      </div>
+      <div class="entry">
+        <h3>Postal Worker</h3>
+        <p class="meta">Posti · 2019–2025, seasonal</p>
+      </div>
+    </section>
+
+    <section class="glass-light about-section" aria-labelledby="education-title">
+      <h2 id="education-title">Education</h2>
+      <div class="entry">
+        <h3>Master’s degree in Human–Technology Interaction</h3>
+        <p class="meta">Tampere University · 2026 (ongoing)</p>
+        <p>Thesis: How Young People Recognize Misinformation and How Gamification Can Support This in Digital Environments (in Finnish, in progress)</p>
+      </div>
+      <div class="entry">
+        <h3>Bachelor’s degree in Computer Science</h3>
+        <p class="meta">Tampere University · 2024</p>
+        <p>Thesis: Effects of dark patterns and ways to shield oneself from them (in Finnish) · <a class="text-link" href="https://urn.fi/URN:NBN:fi:tuni-202404294777" target="_blank" rel="noopener">Read the thesis<span class="visually-hidden"> (opens in a new tab)</span></a></p>
+      </div>
+    </section>
+
+    <section class="glass-light about-section" aria-labelledby="skills-title">
+      <h2 id="skills-title">Skills</h2>
+      <div class="skills-grid">
+        <div class="skill-group">
+          <h3>User Research</h3>
+          <ul class="tag-list">
+            <li class="skill-tag">Data analysis</li>
+            <li class="skill-tag">Expert evaluation</li>
+            <li class="skill-tag">Heuristic evaluation</li>
+            <li class="skill-tag">Interviews</li>
+            <li class="skill-tag">SUS</li>
+            <li class="skill-tag">UEQ</li>
+            <li class="skill-tag">Usability testing</li>
+            <li class="skill-tag">User personas</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h3>Design Methods</h3>
+          <ul class="tag-list">
+            <li class="skill-tag">Affinity diagramming</li>
+            <li class="skill-tag">Customer segmentation</li>
+            <li class="skill-tag">Ideation</li>
+            <li class="skill-tag">Prototyping</li>
+            <li class="skill-tag">Story mapping</li>
+            <li class="skill-tag">Storyboarding</li>
+            <li class="skill-tag">User stories</li>
+            <li class="skill-tag">Value proposition canvas</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h3>UI/UX Design</h3>
+          <ul class="tag-list">
+            <li class="skill-tag">Accessibility</li>
+            <li class="skill-tag">Ethical design</li>
+            <li class="skill-tag">Information architecture</li>
+            <li class="skill-tag">Multimodal interaction</li>
+            <li class="skill-tag">User-centered design</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h3>Tools</h3>
+          <ul class="tag-list">
+            <li class="skill-tag">ChatGPT</li>
+            <li class="skill-tag">Claude</li>
+            <li class="skill-tag">Copilot</li>
+            <li class="skill-tag">Figma</li>
+            <li class="skill-tag">Gemini</li>
+            <li class="skill-tag">Git</li>
+            <li class="skill-tag">Microsoft 365</li>
+            <li class="skill-tag">Perplexity</li>
+          </ul>
+        </div>
+        <div class="skill-group">
+          <h3>Soft Skills</h3>
+          <ul class="tag-list">
+            <li class="skill-tag">Adaptability</li>
+            <li class="skill-tag">Attention to detail</li>
+            <li class="skill-tag">Client collaboration</li>
+            <li class="skill-tag">Communication</li>
+            <li class="skill-tag">Organization</li>
+            <li class="skill-tag">Problem solving</li>
+            <li class="skill-tag">Teamwork</li>
+            <li class="skill-tag">Time management</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="glass-light about-section" aria-labelledby="languages-title">
+      <h2 id="languages-title">Languages</h2>
+      <ul class="tag-list">
+            <li class="skill-tag"><strong>Finnish</strong> · native</li>
+            <li class="skill-tag"><strong>English</strong> · fluent</li>
+            <li class="skill-tag"><strong>German</strong> · limited</li>
+            <li class="skill-tag"><strong>Swedish</strong> · limited</li>
+          </ul>
+    </section>
+
+    <div class="center">
+      <a href="projects.html" class="btn">See My Projects</a>
+      <a href="contact.html" class="btn btn-outline">Get in Touch</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 Santeri Keskinen — <a href="mailto:santkesk@proton.me">santkesk@proton.me</a></p>
+  </footer>
+</body>
+</html>
