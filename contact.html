@@ -1,139 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Santeri Keskinen – Contact</title>
-  <meta name="description" content="Contact Santeri Keskinen by email, LinkedIn or the contact form.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230062cc'/%3E%3Ctext x='50' y='67' font-size='46' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3ESK%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css">
-  <script>
-    // Dark mode: one choice for the whole site, kept across pages
-    (function () {
-      var root = document.documentElement, KEY = 'theme';
-      var local = location.protocol === 'file:';   // opened straight from disk: browsers may not share storage between files
-      var explicit = false;
-
-      function readStore() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
-      function writeStore(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
-      function readName() { var m = /^theme-(dark|light)$/.exec(window.name); return m ? m[1] : null; }
-      function readUrl() { var m = /[?&]theme=(dark|light)/.exec(location.search); return m ? m[1] : null; }
-      function choice(restored) {
-        if (!local) return readStore();
-        return restored ? (readName() || readUrl() || readStore()) : (readUrl() || readName() || readStore());
-      }
-      function isDark() { return root.getAttribute('data-theme') === 'dark'; }
-      function apply(v) { if (v === 'dark') root.setAttribute('data-theme', 'dark'); else root.removeAttribute('data-theme'); }
-      function sync() {
-        var b = document.querySelector('.theme-toggle');
-        if (b) b.setAttribute('aria-pressed', isDark() ? 'true' : 'false');
-      }
-      function withTheme(href, v) {
-        var h = href.indexOf('#'), hash = h > -1 ? href.slice(h) : '', base = h > -1 ? href.slice(0, h) : href;
-        base = base.replace(/([?&])theme=(dark|light)(&|$)/, function (m, a, b, c) { return c ? a : ''; }).replace(/[?&]$/, '');
-        return base + (base.indexOf('?') > -1 ? '&' : '?') + 'theme=' + v + hash;
-      }
-      // When opened from disk, carry the choice to other pages in the links
-      function decorate() {
-        if (!local || !explicit) return;
-        var v = isDark() ? 'dark' : 'light';
-        var links = document.querySelectorAll('a[href]');
-        for (var i = 0; i < links.length; i++) {
-          var href = links[i].getAttribute('href');
-          if (/^([a-z][a-z0-9+.-]*:|#|\/\/)/i.test(href)) continue;
-          var path = href.split('#')[0].split('?')[0];
-          if (path && !/\.html?$/i.test(path)) continue;
-          links[i].setAttribute('href', withTheme(href, v));
-        }
-      }
-
-      var chosen = choice(false);
-      if (chosen) { explicit = true; apply(chosen); if (local) window.name = 'theme-' + chosen; }
-
-      document.addEventListener('DOMContentLoaded', function () {
-        sync();
-        decorate();
-        var button = document.querySelector('.theme-toggle');
-        if (!button) return;
-        button.addEventListener('click', function () {
-          var v = isDark() ? 'light' : 'dark';
-          explicit = true;
-          apply(v);
-          writeStore(v);
-          if (local) {
-            window.name = 'theme-' + v;
-            try { history.replaceState(null, '', withTheme(location.href, v)); } catch (e) {}
-          }
-          decorate();
-          sync();
-        });
-      });
-
-      // Going back/forward can show a cached page: bring it up to date
-      window.addEventListener('pageshow', function (e) {
-        if (!e.persisted) return;
-        var v = choice(true);
-        if (v) { explicit = true; apply(v); decorate(); }
-        sync();
-      });
-    })();
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Santeri Keskinen – Contact
+  </title>
+  <meta content="Contact Santeri Keskinen by email, LinkedIn or the contact form." name="description"/>
+  <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230062cc'/%3E%3Ctext x='50' y='67' font-size='46' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3ESK%3C/text%3E%3C/svg%3E" rel="icon"/>
+  <link href="styles.css" rel="stylesheet"/>
+  <script src="script.js">
   </script>
-</head>
-<body class="contact-page">
-  <a href="#main" class="skip-link">Skip to main content</a>
-  <!-- Navigation -->
+  <meta content="Santeri Keskinen – Contact" property="og:title"/>
+  <meta content="Contact Santeri Keskinen by email, LinkedIn or the contact form." property="og:description"/>
+  <meta content="website" property="og:type"/>
+  <meta content="https://santkesk.github.io/contact.html" property="og:url"/>
+  <meta content="https://santkesk.github.io/images/social-preview.png" property="og:image"/>
+  <meta content="Santeri Keskinen — UX Researcher and Designer" property="og:image:alt"/>
+  <meta content="summary_large_image" name="twitter:card"/>
+  <meta content="#eaf2ff" name="theme-color"/>
+  <link href="https://santkesk.github.io/contact.html" rel="canonical"/>
+ </head>
+ <body class="contact-page">
+  <a class="skip-link" href="#main">
+   Skip to main content
+  </a>
   <header class="navbar">
-    <div class="nav-container">
-      <a href="index.html" class="logo">Santeri Keskinen</a>
-      <nav>
-        <ul class="nav-links">
-          <li><a href="about.html">About</a></li>
-          <li><a href="projects.html">Projects</a></li>
-          <li><a href="contact.html" aria-current="page">Contact</a></li>
-          <li><button type="button" class="theme-toggle" aria-pressed="false" aria-label="Dark mode" title="Dark mode"><svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button></li>
-        </ul>
-      </nav>
-    </div>
+   <div class="nav-container">
+    <a class="logo" href="index.html">
+     <span aria-hidden="true" class="brand-mark">
+      SK
+     </span>
+     Santeri Keskinen
+    </a>
+    <nav aria-label="Main navigation">
+     <ul class="nav-links">
+      <li>
+       <a href="about.html">
+        About Me
+       </a>
+      </li>
+      <li>
+       <a href="projects.html">
+        Projects
+       </a>
+      </li>
+      <li>
+       <a aria-current="page" href="contact.html">
+        Contact
+       </a>
+      </li>
+      <li>
+       <button aria-label="Dark mode" aria-pressed="false" class="theme-toggle" title="Dark mode" type="button">
+        <svg aria-hidden="true" class="icon-moon" viewbox="0 0 24 24">
+         <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z">
+         </path>
+        </svg>
+        <svg aria-hidden="true" class="icon-sun" viewbox="0 0 24 24">
+         <circle cx="12" cy="12" r="4">
+         </circle>
+         <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2">
+         </path>
+        </svg>
+       </button>
+      </li>
+     </ul>
+    </nav>
+   </div>
   </header>
-
   <main id="main">
-    <div class="page-intro">
-      <h1>Get in Touch</h1>
-      <p>Interested in working together or want to chat about UX, user research or my projects? Send me a message or reach out directly.</p>
-    </div>
-
-    <section class="contact-cards" aria-label="Contact details">
-      <a href="mailto:santkesk@proton.me" class="contact-card glass-light">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm0 2v.5l8 5 8-5V7H4zm16 10V9.9l-8 5-8-5V17h16z"/></svg>
-        <h2>Email</h2>
-        <p>santkesk@proton.me</p>
-      </a>
-      <a href="https://www.linkedin.com/in/santeri-keskinen/" target="_blank" rel="noopener" class="contact-card glass-light">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3V9.5zm6.5 0h3.8v1.6h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.2c0-1.3 0-2.8-1.8-2.8s-2.1 1.3-2.1 2.7V21h-4V9.5z"/></svg>
-        <h2>LinkedIn</h2>
-        <p>linkedin.com/in/santeri-keskinen<span class="visually-hidden"> (opens in a new tab)</span></p>
-      </a>
-    </section>
-
-    <section class="glass-light contact-form-box" aria-labelledby="form-title">
-      <h2 id="form-title">Send a Message</h2>
-      <form action="https://formspree.io/f/mzzzpzrd" method="POST" class="contact-form">
-        <label for="name">Name</label>
-        <input id="name" name="name" type="text" autocomplete="name" required>
-
-        <label for="email">Email</label>
-        <input id="email" name="_replyto" type="email" autocomplete="email" required>
-
-        <label for="message">Message</label>
-        <textarea id="message" name="message" rows="6" required></textarea>
-
-        <button type="submit" class="btn">Send Message</button>
-      </form>
-    </section>
+   <div class="page-intro">
+    <h1>
+     Get in Touch
+    </h1>
+    <p>
+     Interested in working together or want to chat about UX, user research or my projects? Send me a message or reach out directly.
+    </p>
+   </div>
+   <section aria-label="Contact details" class="contact-cards">
+    <a class="contact-card glass-light" href="mailto:santkesk@proton.me">
+     <svg aria-hidden="true" viewbox="0 0 24 24">
+      <path d="M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm0 2v.5l8 5 8-5V7H4zm16 10V9.9l-8 5-8-5V17h16z">
+      </path>
+     </svg>
+     <h2>
+      Email
+     </h2>
+     <p>
+      santkesk@proton.me
+     </p>
+    </a>
+    <a class="contact-card glass-light" href="https://www.linkedin.com/in/santeri-keskinen/" rel="noopener" target="_blank">
+     <svg aria-hidden="true" viewbox="0 0 24 24">
+      <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4V21H3V9.5zm6.5 0h3.8v1.6h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.2c0-1.3 0-2.8-1.8-2.8s-2.1 1.3-2.1 2.7V21h-4V9.5z">
+      </path>
+     </svg>
+     <h2>
+      LinkedIn
+     </h2>
+     <p>
+      linkedin.com/in/santeri-keskinen
+      <span class="visually-hidden">
+       (opens in a new tab)
+      </span>
+     </p>
+    </a>
+   </section>
+   <section aria-labelledby="form-title" class="glass-light contact-form-box">
+    <h2 id="form-title">
+     Send a Message
+    </h2>
+    <form action="https://formspree.io/f/mzzzpzrd" class="contact-form" method="POST">
+     <label for="name">
+      Name
+     </label>
+     <input autocomplete="name" id="name" name="name" required="" type="text"/>
+     <label for="email">
+      Email
+     </label>
+     <input autocomplete="email" id="email" name="_replyto" required="" type="email"/>
+     <label for="message">
+      Message
+     </label>
+     <textarea id="message" name="message" required="" rows="6"></textarea>
+     <button class="btn" type="submit">
+      Send Message
+     </button>
+    </form>
+   </section>
   </main>
-
   <footer class="footer">
-    <p>© 2026 Santeri Keskinen — <a href="mailto:santkesk@proton.me">santkesk@proton.me</a></p>
+   <div class="footer-inner">
+    <div>
+     <strong>
+      Santeri Keskinen
+     </strong>
+     <p>
+      UX research · Human-centered design
+     </p>
+    </div>
+    <div class="footer-links">
+     <a href="mailto:santkesk@proton.me">
+      Email
+     </a>
+     <a href="https://www.linkedin.com/in/santeri-keskinen/">
+      LinkedIn
+     </a>
+     <a href="projects.html">
+      Projects
+     </a>
+    </div>
+    <p class="copyright">
+     © 2026 Santeri Keskinen
+    </p>
+   </div>
   </footer>
-</body>
+ </body>
 </html>

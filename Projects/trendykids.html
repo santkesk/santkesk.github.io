@@ -1,174 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trendy-kirppis – Santeri Keskinen</title>
-  <meta name="description" content="Trendy-kirppis project: usability and accessibility evaluation of a new website using heuristics and WCAG, in close collaboration with the developer.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230062cc'/%3E%3Ctext x='50' y='67' font-size='46' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3ESK%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="../styles.css">
-  <script>
-    // Dark mode: one choice for the whole site, kept across pages
-    (function () {
-      var root = document.documentElement, KEY = 'theme';
-      var local = location.protocol === 'file:';   // opened straight from disk: browsers may not share storage between files
-      var explicit = false;
-
-      function readStore() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
-      function writeStore(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
-      function readName() { var m = /^theme-(dark|light)$/.exec(window.name); return m ? m[1] : null; }
-      function readUrl() { var m = /[?&]theme=(dark|light)/.exec(location.search); return m ? m[1] : null; }
-      function choice(restored) {
-        if (!local) return readStore();
-        return restored ? (readName() || readUrl() || readStore()) : (readUrl() || readName() || readStore());
-      }
-      function isDark() { return root.getAttribute('data-theme') === 'dark'; }
-      function apply(v) { if (v === 'dark') root.setAttribute('data-theme', 'dark'); else root.removeAttribute('data-theme'); }
-      function sync() {
-        var b = document.querySelector('.theme-toggle');
-        if (b) b.setAttribute('aria-pressed', isDark() ? 'true' : 'false');
-      }
-      function withTheme(href, v) {
-        var h = href.indexOf('#'), hash = h > -1 ? href.slice(h) : '', base = h > -1 ? href.slice(0, h) : href;
-        base = base.replace(/([?&])theme=(dark|light)(&|$)/, function (m, a, b, c) { return c ? a : ''; }).replace(/[?&]$/, '');
-        return base + (base.indexOf('?') > -1 ? '&' : '?') + 'theme=' + v + hash;
-      }
-      // When opened from disk, carry the choice to other pages in the links
-      function decorate() {
-        if (!local || !explicit) return;
-        var v = isDark() ? 'dark' : 'light';
-        var links = document.querySelectorAll('a[href]');
-        for (var i = 0; i < links.length; i++) {
-          var href = links[i].getAttribute('href');
-          if (/^([a-z][a-z0-9+.-]*:|#|\/\/)/i.test(href)) continue;
-          var path = href.split('#')[0].split('?')[0];
-          if (path && !/\.html?$/i.test(path)) continue;
-          links[i].setAttribute('href', withTheme(href, v));
-        }
-      }
-
-      var chosen = choice(false);
-      if (chosen) { explicit = true; apply(chosen); if (local) window.name = 'theme-' + chosen; }
-
-      document.addEventListener('DOMContentLoaded', function () {
-        sync();
-        decorate();
-        var button = document.querySelector('.theme-toggle');
-        if (!button) return;
-        button.addEventListener('click', function () {
-          var v = isDark() ? 'light' : 'dark';
-          explicit = true;
-          apply(v);
-          writeStore(v);
-          if (local) {
-            window.name = 'theme-' + v;
-            try { history.replaceState(null, '', withTheme(location.href, v)); } catch (e) {}
-          }
-          decorate();
-          sync();
-        });
-      });
-
-      // Going back/forward can show a cached page: bring it up to date
-      window.addEventListener('pageshow', function (e) {
-        if (!e.persisted) return;
-        var v = choice(true);
-        if (v) { explicit = true; apply(v); decorate(); }
-        sync();
-      });
-    })();
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Trendy-kirppis — Santeri Keskinen
+  </title>
+  <meta content="Trendy-kirppis project: usability and accessibility evaluation of a new website using heuristics and WCAG, in close collaboration with the developer." name="description"/>
+  <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230062cc'/%3E%3Ctext x='50' y='67' font-size='46' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3ESK%3C/text%3E%3C/svg%3E" rel="icon"/>
+  <link href="../styles.css" rel="stylesheet"/>
+  <script src="../script.js">
   </script>
-</head>
-<body class="project-page">
-  <a href="#main" class="skip-link">Skip to main content</a>
+  <meta content="Trendy-kirppis — Santeri Keskinen" property="og:title"/>
+  <meta content="Trendy-kirppis project: usability and accessibility evaluation of a new website using heuristics and WCAG, in close collaboration with the developer." property="og:description"/>
+  <meta content="website" property="og:type"/>
+  <meta content="https://santkesk.github.io/Projects/trendykids.html" property="og:url"/>
+  <meta content="https://santkesk.github.io/images/social-preview.png" property="og:image"/>
+  <meta content="Santeri Keskinen — UX Researcher and Designer" property="og:image:alt"/>
+  <meta content="summary_large_image" name="twitter:card"/>
+  <meta content="#eaf2ff" name="theme-color"/>
+  <link href="https://santkesk.github.io/Projects/trendykids.html" rel="canonical"/>
+ </head>
+ <body class="project-page">
+  <a class="skip-link" href="#main">
+   Skip to main content
+  </a>
   <header class="navbar">
-    <div class="nav-container">
-      <a href="../index.html" class="logo">Santeri Keskinen</a>
-      <nav>
-        <ul class="nav-links">
-          <li><a href="../about.html">About</a></li>        
-          <li><a href="../projects.html" aria-current="true">Projects</a></li>
-          <li><a href="../contact.html">Contact</a></li>
-          <li><button type="button" class="theme-toggle" aria-pressed="false" aria-label="Dark mode" title="Dark mode"><svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button></li>
-        </ul>
-      </nav>
-    </div>
+   <div class="nav-container">
+    <a class="logo" href="../index.html">
+     <span aria-hidden="true" class="brand-mark">
+      SK
+     </span>
+     Santeri Keskinen
+    </a>
+    <nav aria-label="Main navigation">
+     <ul class="nav-links">
+      <li>
+       <a href="../about.html">
+        About Me
+       </a>
+      </li>
+      <li>
+       <a aria-current="true" href="../projects.html">
+        Projects
+       </a>
+      </li>
+      <li>
+       <a href="../contact.html">
+        Contact
+       </a>
+      </li>
+      <li>
+       <button aria-label="Dark mode" aria-pressed="false" class="theme-toggle" title="Dark mode" type="button">
+        <svg aria-hidden="true" class="icon-moon" viewbox="0 0 24 24">
+         <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z">
+         </path>
+        </svg>
+        <svg aria-hidden="true" class="icon-sun" viewbox="0 0 24 24">
+         <circle cx="12" cy="12" r="4">
+         </circle>
+         <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2">
+         </path>
+        </svg>
+       </button>
+      </li>
+     </ul>
+    </nav>
+   </div>
   </header>
   <main id="main">
-    <h1>Trendy-kirppis</h1>
-    <section class="summary" aria-labelledby="summary-title">
-      <h2 id="summary-title">At a Glance</h2>
-      <ul>
-          <li><strong>Problem</strong> The client’s new website needed to be usable, accessible and easy to navigate.</li>
-          <li><strong>What I did</strong> Evaluated the design with usability heuristics and WCAG, checked the structure and navigation, and worked closely with the developer on changes.</li>
-          <li><strong>Result</strong> The developer received design feedback and change suggestions, and the site’s structure and navigation paths were checked to be suitable and efficient.</li>
-      </ul>
-    </section>
-    <section class="description glass-light" aria-labelledby="description">
-      <h2 id="description">Project Description</h2>
-      <p>
-        Trendy-kirppis is a children’s flea market company that needed a new website. A developer built the site, and I worked closely with them as the usability and accessibility specialist. I evaluated the design using usability heuristics and WCAG, checked that the information architecture and navigation paths were suitable and efficient, and gave feedback on design choices and suggestions for changes.
-      </p>
-        <div class="project-links">
-          <a href="https://www.trendykirppis.fi/" class="btn" target="_blank" rel="noopener">Visit Trendy-kirppis Website<span class="visually-hidden"> (opens in a new tab)</span></a>
-        </div>
-    </section>
-    <hr>
-    <section class="about" aria-labelledby="about">
+   <a class="back-link text-link" href="../projects.html">
+    ← All projects
+   </a>
+   <p class="eyebrow case-kicker">
+    Accessibility &amp; usability · 2024
+   </p>
+   <h1>
+    Trendy-kirppis
+   </h1>
+   <p class="case-subtitle">
+    Making a local business website easier to use
+   </p>
+   <section aria-labelledby="summary-title" class="summary">
+    <h2 id="summary-title">
+     At a Glance
+    </h2>
+    <ul>
+     <li>
+      <strong>
+       Problem
+      </strong>
+      The client’s new website needed to be usable, accessible and easy to navigate.
+     </li>
+     <li>
+      <strong>
+       What I did
+      </strong>
+      Evaluated the design with usability heuristics and WCAG, checked the structure and navigation, and worked closely with the developer on changes.
+     </li>
+     <li>
+      <strong>
+       Result
+      </strong>
+      The developer received design feedback and change suggestions, and the site’s structure and navigation paths were checked to be suitable and efficient.
+     </li>
+    </ul>
+   </section>
+   <section aria-labelledby="description" class="description glass-light">
+    <h2 id="description">
+     Project Description
+    </h2>
+    <p>
+     Trendy-kirppis needed a new website for its business. I joined the client project as a usability and accessibility specialist, working alongside the developer rather than building the site myself.
+    </p>
+    <div class="project-links">
+     <a class="btn" href="https://www.trendykirppis.fi/" rel="noopener" target="_blank">
+      Visit Trendy-kirppis Website
+      <span class="visually-hidden">
+       (opens in a new tab)
+      </span>
+     </a>
+    </div>
+   </section>
+   <figure class="project-figure">
+    <img alt="Trendy-kirppis website" height="887" loading="lazy" src="../images/trendykirppis.webp" width="1647"/>
+    <figcaption>
+     Trendy-kirppis website — project material.
+    </figcaption>
+   </figure>
+   <hr/>
+   <section aria-label="Project details" class="about">
     <div class="about-inline">
-        <div class="about-field">
-        <h3>Timeline</h3>
-        <p>2024</p>
-        </div>
-        <div class="about-field">
-        <h3>Type</h3>
-        <p>Usability Evaluation</p>
-        </div>
-        <div class="about-field">
-        <h3>Project Type</h3>
-        <p>Client project</p>
-        </div>
-        <div class="about-field">
-        <h3>Role</h3>
-        <p>Usability Specialist</p>
-        </div>
+     <div class="about-field">
+      <h3>
+       Timeline
+      </h3>
+      <p>
+       2024
+      </p>
+     </div>
+     <div class="about-field">
+      <h3>
+       Type
+      </h3>
+      <p>
+       Usability Evaluation
+      </p>
+     </div>
+     <div class="about-field">
+      <h3>
+       Project Type
+      </h3>
+      <p>
+       Client project
+      </p>
+     </div>
+     <div class="about-field">
+      <h3>
+       Role
+      </h3>
+      <p>
+       Usability Specialist
+      </p>
+     </div>
     </div>
-    </section>
-
-    <section class="project-sections">
-      <article class="glass-light">
-        <h2>Problem Statement</h2>
-        <p>The client needed a new website for their company. The site was being built by a developer, and before it could serve customers well, it needed to be checked for usability and accessibility, and to have a clear structure and navigation that let visitors find what they need efficiently.</p>
-      </article>
-
-      <article class="glass-light">
-        <h2>My Contribution</h2>
-        <p>I did not design or build the website. I worked as the usability and accessibility specialist and collaborated closely with the developer throughout. I gave feedback on the design choices, suggested changes, and made sure the information architecture and navigation paths were suitable and efficient.</p>
-      </article>
-
-      <article class="glass-light">
-        <h2>Research &amp; Evaluation</h2>
-        <p>I carried out an expert evaluation of the website. I used usability heuristics to find usability problems and the Web Content Accessibility Guidelines (WCAG) to check that people with different needs could use the site. I also reviewed the information architecture and the navigation paths to see whether visitors could reach content in a logical and efficient way.</p>
-      </article>
-
-      <article class="glass-light">
-        <h2>Solution &amp; Recommendations</h2>
-        <p>I passed my findings to the developer as feedback on specific design choices, together with suggestions for how to change them. Because we worked closely together, the developer could ask questions and discuss alternatives while making the improvements.</p>
-      </article>
-
-      <article class="glass-light">
-        <h2>Outcomes &amp; Learnings</h2>
-        <p>The developer received concrete feedback and change suggestions based on the evaluation, and the site’s structure and navigation paths were checked to be suitable and efficient. The project taught me to communicate evaluation findings in a way that is clear and practical for the person building the product, and gave me experience of working with a real client and developer.</p>
-      </article>
-    </section>
-
-    <div class="center">
-      <a href="../projects.html" class="btn">Back to Projects</a>
-    </div>
+   </section>
+   <section class="project-sections">
+    <article class="glass-light">
+     <h2>
+      Problem Statement
+     </h2>
+     <p>
+      Visitors needed to find relevant information and navigate the new site efficiently. The challenge was to evaluate the developing interface against usability and accessibility principles and identify changes while they were still practical to implement.
+     </p>
+    </article>
+    <article class="glass-light">
+     <h2>
+      My Contribution
+     </h2>
+     <p>
+      I provided feedback on design decisions and assessed information architecture and navigation. My role was to challenge and refine the design through evaluation, while the developer was responsible for implementation.
+     </p>
+    </article>
+    <article class="glass-light">
+     <h2>
+      Research &amp; Evaluation
+     </h2>
+     <p>
+      I carried out an expert evaluation of the website. I used usability heuristics to find usability problems and the Web Content Accessibility Guidelines (WCAG) to check that people with different needs could use the site. I also reviewed the information architecture and the navigation paths to see whether visitors could reach content in a logical and efficient way.
+     </p>
+    </article>
+    <article class="glass-light">
+     <h2>
+      Solution &amp; Recommendations
+     </h2>
+     <p>
+      I communicated findings as concrete change suggestions, discussing alternatives directly with the developer so the feedback could inform implementation.
+     </p>
+    </article>
+    <article class="glass-light">
+     <h2>
+      Outcomes &amp; Learnings
+     </h2>
+     <p>
+      The client received actionable feedback on usability, accessibility and navigation. The collaboration taught me how to translate evaluation findings into practical recommendations for a developer. No formal post-change user testing results are documented here.
+     </p>
+    </article>
+   </section>
+   <div class="center">
+    <a class="btn" href="../projects.html">
+     Back to Projects
+    </a>
+   </div>
   </main>
-
   <footer class="footer">
-    <p>© 2026 Santeri Keskinen — <a href="mailto:santkesk@proton.me">santkesk@proton.me</a></p>
+   <div class="footer-inner">
+    <div>
+     <strong>
+      Santeri Keskinen
+     </strong>
+     <p>
+      UX research · Human-centered design
+     </p>
+    </div>
+    <div class="footer-links">
+     <a href="mailto:santkesk@proton.me">
+      Email
+     </a>
+     <a href="https://www.linkedin.com/in/santeri-keskinen/">
+      LinkedIn
+     </a>
+     <a href="../projects.html">
+      Projects
+     </a>
+    </div>
+    <p class="copyright">
+     © 2026 Santeri Keskinen
+    </p>
+   </div>
   </footer>
-</body>
+ </body>
 </html>

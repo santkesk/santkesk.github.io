@@ -1,173 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>F1 Predictions – Santeri Keskinen</title>
-  <meta name="description" content="F1 Predictions: a web-based Formula 1 season prediction game built with HTML, CSS and JavaScript.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230062cc'/%3E%3Ctext x='50' y='67' font-size='46' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3ESK%3C/text%3E%3C/svg%3E">
-  <link rel="stylesheet" href="../styles.css">
-  <script>
-    // Dark mode: one choice for the whole site, kept across pages
-    (function () {
-      var root = document.documentElement, KEY = 'theme';
-      var local = location.protocol === 'file:';   // opened straight from disk: browsers may not share storage between files
-      var explicit = false;
-
-      function readStore() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
-      function writeStore(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
-      function readName() { var m = /^theme-(dark|light)$/.exec(window.name); return m ? m[1] : null; }
-      function readUrl() { var m = /[?&]theme=(dark|light)/.exec(location.search); return m ? m[1] : null; }
-      function choice(restored) {
-        if (!local) return readStore();
-        return restored ? (readName() || readUrl() || readStore()) : (readUrl() || readName() || readStore());
-      }
-      function isDark() { return root.getAttribute('data-theme') === 'dark'; }
-      function apply(v) { if (v === 'dark') root.setAttribute('data-theme', 'dark'); else root.removeAttribute('data-theme'); }
-      function sync() {
-        var b = document.querySelector('.theme-toggle');
-        if (b) b.setAttribute('aria-pressed', isDark() ? 'true' : 'false');
-      }
-      function withTheme(href, v) {
-        var h = href.indexOf('#'), hash = h > -1 ? href.slice(h) : '', base = h > -1 ? href.slice(0, h) : href;
-        base = base.replace(/([?&])theme=(dark|light)(&|$)/, function (m, a, b, c) { return c ? a : ''; }).replace(/[?&]$/, '');
-        return base + (base.indexOf('?') > -1 ? '&' : '?') + 'theme=' + v + hash;
-      }
-      // When opened from disk, carry the choice to other pages in the links
-      function decorate() {
-        if (!local || !explicit) return;
-        var v = isDark() ? 'dark' : 'light';
-        var links = document.querySelectorAll('a[href]');
-        for (var i = 0; i < links.length; i++) {
-          var href = links[i].getAttribute('href');
-          if (/^([a-z][a-z0-9+.-]*:|#|\/\/)/i.test(href)) continue;
-          var path = href.split('#')[0].split('?')[0];
-          if (path && !/\.html?$/i.test(path)) continue;
-          links[i].setAttribute('href', withTheme(href, v));
-        }
-      }
-
-      var chosen = choice(false);
-      if (chosen) { explicit = true; apply(chosen); if (local) window.name = 'theme-' + chosen; }
-
-      document.addEventListener('DOMContentLoaded', function () {
-        sync();
-        decorate();
-        var button = document.querySelector('.theme-toggle');
-        if (!button) return;
-        button.addEventListener('click', function () {
-          var v = isDark() ? 'light' : 'dark';
-          explicit = true;
-          apply(v);
-          writeStore(v);
-          if (local) {
-            window.name = 'theme-' + v;
-            try { history.replaceState(null, '', withTheme(location.href, v)); } catch (e) {}
-          }
-          decorate();
-          sync();
-        });
-      });
-
-      // Going back/forward can show a cached page: bring it up to date
-      window.addEventListener('pageshow', function (e) {
-        if (!e.persisted) return;
-        var v = choice(true);
-        if (v) { explicit = true; apply(v); decorate(); }
-        sync();
-      });
-    })();
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   F1 Predictions — Santeri Keskinen
+  </title>
+  <meta content="F1 Predictions: a web-based Formula 1 season prediction game built with HTML, CSS and JavaScript." name="description"/>
+  <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230062cc'/%3E%3Ctext x='50' y='67' font-size='46' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3ESK%3C/text%3E%3C/svg%3E" rel="icon"/>
+  <link href="../styles.css" rel="stylesheet"/>
+  <script src="../script.js">
   </script>
-</head>
-<body class="project-page">
-  <a href="#main" class="skip-link">Skip to main content</a>
+  <meta content="F1 Predictions — Santeri Keskinen" property="og:title"/>
+  <meta content="F1 Predictions: a web-based Formula 1 season prediction game built with HTML, CSS and JavaScript." property="og:description"/>
+  <meta content="website" property="og:type"/>
+  <meta content="https://santkesk.github.io/Projects/f1predictions.html" property="og:url"/>
+  <meta content="https://santkesk.github.io/images/social-preview.png" property="og:image"/>
+  <meta content="Santeri Keskinen — UX Researcher and Designer" property="og:image:alt"/>
+  <meta content="summary_large_image" name="twitter:card"/>
+  <meta content="#eaf2ff" name="theme-color"/>
+  <link href="https://santkesk.github.io/Projects/f1predictions.html" rel="canonical"/>
+ </head>
+ <body class="project-page">
+  <a class="skip-link" href="#main">
+   Skip to main content
+  </a>
   <header class="navbar">
-    <div class="nav-container">
-      <a href="../index.html" class="logo">Santeri Keskinen</a>
-      <nav>
-        <ul class="nav-links">
-          <li><a href="../about.html">About</a></li>        
-          <li><a href="../projects.html" aria-current="true">Projects</a></li>
-          <li><a href="../contact.html">Contact</a></li>
-          <li><button type="button" class="theme-toggle" aria-pressed="false" aria-label="Dark mode" title="Dark mode"><svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg></button></li>
-        </ul>
-      </nav>
-    </div>
+   <div class="nav-container">
+    <a class="logo" href="../index.html">
+     <span aria-hidden="true" class="brand-mark">
+      SK
+     </span>
+     Santeri Keskinen
+    </a>
+    <nav aria-label="Main navigation">
+     <ul class="nav-links">
+      <li>
+       <a href="../about.html">
+        About Me
+       </a>
+      </li>
+      <li>
+       <a aria-current="true" href="../projects.html">
+        Projects
+       </a>
+      </li>
+      <li>
+       <a href="../contact.html">
+        Contact
+       </a>
+      </li>
+      <li>
+       <button aria-label="Dark mode" aria-pressed="false" class="theme-toggle" title="Dark mode" type="button">
+        <svg aria-hidden="true" class="icon-moon" viewbox="0 0 24 24">
+         <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z">
+         </path>
+        </svg>
+        <svg aria-hidden="true" class="icon-sun" viewbox="0 0 24 24">
+         <circle cx="12" cy="12" r="4">
+         </circle>
+         <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2">
+         </path>
+        </svg>
+       </button>
+      </li>
+     </ul>
+    </nav>
+   </div>
   </header>
   <main id="main">
-    <h1>F1 Predictions</h1>
-    <section class="summary" aria-labelledby="summary-title">
-      <h2 id="summary-title">At a Glance</h2>
-      <ul>
-          <li><strong>Background</strong> I have followed Formula 1 with my family since 2012 and made a PowerPoint prediction game for them in 2020.</li>
-          <li><strong>What I did</strong> Built a web version in HTML, CSS and JavaScript that is more accessible and user-friendly.</li>
-          <li><strong>Result</strong> The website has a working prediction form for the next F1 season.</li>
-      </ul>
-    </section>
-    <section class="description glass-light" aria-labelledby="description">
-      <h2 id="description">Project Description</h2>
-      <p>
-        Since young age, I've been interested in Formula 1 racing, and I've been watching it closely with my family since 2012.
-        In 2020, I created a prediction game in PowerPoint for my family to make following the F1 season more engaging.
-        The game involved predicting the outcome of the season, including championship standings, race winners, and other key events.
-        In 2025, I decided to develop a web-based version of this prediction game to make it more accessible and user-friendly.
-        The website lets users make predictions for the F1 season and view statistics from previous years.
-      </p>
-      <div class="project-links">
-          <a href="https://santkesk.github.io/f1-predictions/" class="btn" target="_blank" rel="noopener">Visit F1 Predictions Website<span class="visually-hidden"> (opens in a new tab)</span></a>
-        </div>
-    </section>
-    <hr>
-    <section class="about" aria-labelledby="about">
+   <a class="back-link text-link" href="../projects.html">
+    ← All projects
+   </a>
+   <p class="eyebrow case-kicker">
+    Personal project · 2025
+   </p>
+   <h1>
+    F1 Predictions
+   </h1>
+   <p class="case-subtitle">
+    Turning a family tradition into a digital experience
+   </p>
+   <section aria-labelledby="summary-title" class="summary">
+    <h2 id="summary-title">
+     At a Glance
+    </h2>
+    <ul>
+     <li>
+      <strong>
+       Background
+      </strong>
+      I have followed Formula 1 with my family since 2012 and made a PowerPoint prediction game for them in 2020.
+     </li>
+     <li>
+      <strong>
+       What I did
+      </strong>
+      Built a web version in HTML, CSS and JavaScript that is more accessible and user-friendly.
+     </li>
+     <li>
+      <strong>
+       Result
+      </strong>
+      The website has a working prediction form for the next F1 season.
+     </li>
+    </ul>
+   </section>
+   <section aria-labelledby="description" class="description glass-light">
+    <h2 id="description">
+     Project Description
+    </h2>
+    <p>
+     Formula 1 has been a shared interest in my family since 2012. In 2020, I turned our enthusiasm into a seasonal prediction game in PowerPoint. Five years later, I set out to bring that tradition to the web.
+    </p>
+    <div class="project-links">
+     <a class="btn" href="https://santkesk.github.io/f1-predictions/" rel="noopener" target="_blank">
+      Visit F1 Predictions Website
+      <span class="visually-hidden">
+       (opens in a new tab)
+      </span>
+     </a>
+    </div>
+   </section>
+   <figure class="project-figure">
+    <img alt="Homepage view of the F1 Predictions website" height="951" loading="lazy" src="../images/f1predictions-home.webp" width="1650"/>
+    <figcaption>
+     Homepage of the F1 Predictions website, introducing the 2026 season prediction game.
+    </figcaption>
+   </figure>
+   <figure class="project-figure">
+    <img alt="Prediction form view of the F1 Predictions website" height="939" loading="lazy" src="../images/f1predictions-form.webp" width="1094"/>
+    <figcaption>
+     Prediction form view showing section navigation, progress tracking and question-specific scoring.
+    </figcaption>
+   </figure>
+   <hr/>
+   <section aria-label="Project details" class="about">
     <div class="about-inline">
-        <div class="about-field">
-        <h3>Timeline</h3>
-        <p>2025</p>
-        </div>
-        <div class="about-field">
-        <h3>Type</h3>
-        <p>Web Development</p>
-        </div>
-        <div class="about-field">
-        <h3>Project Type</h3>
-        <p>Personal project</p>
-        </div>
-        <div class="about-field">
-        <h3>Role</h3>
-        <p>Web Developer</p>
-        </div>
+     <div class="about-field">
+      <h3>
+       Timeline
+      </h3>
+      <p>
+       2025
+      </p>
+     </div>
+     <div class="about-field">
+      <h3>
+       Type
+      </h3>
+      <p>
+       Web Development
+      </p>
+     </div>
+     <div class="about-field">
+      <h3>
+       Project Type
+      </h3>
+      <p>
+       Personal project
+      </p>
+     </div>
+     <div class="about-field">
+      <h3>
+       Role
+      </h3>
+      <p>
+       Web Developer
+      </p>
+     </div>
     </div>
-    </section>
-
-    <section class="project-sections">
-      <article class="glass-light">
-        <h2>Problem Statement</h2>
-        <p>In 2020 I created a PowerPoint prediction game for my family to make following the F1 season more engaging. Players predict the season’s outcome, including championship standings, race winners and other key events. I wanted to turn it into a web-based version that is more accessible and user-friendly.</p>
-      </article>
-
-      <article class="glass-light">
-        <h2>My Contribution</h2>
-        <p>This is an individual project: I developed the website myself in HTML, CSS and JavaScript.</p>
-      </article>
-
-      <article class="glass-light">
-        <h2>Solution &amp; Recommendations</h2>
-        <p>The website is built around a prediction form where players make their predictions for the next F1 season, such as championship standings, race winners and other key events. To help with the predictions, the site provides historical F1 data. Players can also look back at the statistics of previous games.</p>
-      </article>
-
-      <article class="glass-light">
-        <h2>Outcomes &amp; Learnings</h2>
-        <p>The website is yet to be tested with users. The project taught me about web development and UI/UX design.</p>
-      </article>
-    </section>
-
-    <div class="center">
-      <a href="../projects.html" class="btn">Back to Projects</a>
-    </div>
+   </section>
+   <section class="project-sections">
+    <article class="glass-light">
+     <h2>
+      Problem Statement
+     </h2>
+     <p>
+      The original format made it difficult to bring the prediction form, historical results and game statistics together in one place. I wanted an interface that players could navigate independently and return to throughout the season.
+     </p>
+    </article>
+    <article class="glass-light">
+     <h2>
+      My Contribution
+     </h2>
+     <p>
+      I independently designed and developed the website using HTML, CSS and JavaScript, organising the prediction process and historical information into a coherent web experience.
+     </p>
+    </article>
+    <article class="glass-light">
+     <h2>
+      Solution &amp; Recommendations
+     </h2>
+     <p>
+      The website is built around a prediction form where players make their predictions for the next F1 season, such as championship standings, race winners and other key events. To help with the predictions, the site provides historical F1 data. Players can also look back at the statistics of previous games.
+     </p>
+    </article>
+    <article class="glass-light">
+     <h2>
+      Outcomes &amp; Learnings
+     </h2>
+     <p>
+      The project gave me practical experience in translating a familiar offline activity into a digital interface. User testing remains a next step; the current design has not yet been validated with players.
+     </p>
+    </article>
+   </section>
+   <div class="center">
+    <a class="btn" href="../projects.html">
+     Back to Projects
+    </a>
+   </div>
   </main>
-
   <footer class="footer">
-    <p>© 2026 Santeri Keskinen — <a href="mailto:santkesk@proton.me">santkesk@proton.me</a></p>
+   <div class="footer-inner">
+    <div>
+     <strong>
+      Santeri Keskinen
+     </strong>
+     <p>
+      UX research · Human-centered design
+     </p>
+    </div>
+    <div class="footer-links">
+     <a href="mailto:santkesk@proton.me">
+      Email
+     </a>
+     <a href="https://www.linkedin.com/in/santeri-keskinen/">
+      LinkedIn
+     </a>
+     <a href="../projects.html">
+      Projects
+     </a>
+    </div>
+    <p class="copyright">
+     © 2026 Santeri Keskinen
+    </p>
+   </div>
   </footer>
-</body>
+ </body>
 </html>
